@@ -1,5 +1,6 @@
 // 请求模块
 import axios from 'axios'
+import { getToken } from './auth'
 // 分为两种：1、通用配置√ 2、定制化配置
 
 /**
@@ -33,6 +34,13 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    // 给请求头添加 token
+    const token = getToken()
+    if (token) {
+      // 前面是固定写法，后面 token 的拼接模式由后端来决定
+      config.headers.Authorization = token
+    }
+    // 先更改参数，再把修改后的参数 return 出去给接口使用
     return config // 这两个 return 不能丢
   },
   error => {
