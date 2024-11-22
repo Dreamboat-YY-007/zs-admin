@@ -28,9 +28,14 @@
         >
           <el-input v-model="form.password" />
         </el-form-item>
-
+        <!--
+          1、完成选择框的双向绑定，得到一个 true 或者 false 的选中状态
+          2、如果当前为 true，点击登录时，表示要记住，把当前的用户名和密码存入本地
+          3、组件初始化的时候，从本地取账号和密码，把账号密码存入用来双向绑定的 form 对象身上
+          4、如果当前用户没有记住，状态为 false，点击登录的时候要把之前的数据清空
+         -->
         <el-form-item prop="remember">
-          <el-checkbox>记住我</el-checkbox>
+          <el-checkbox v-model="remember">记住我</el-checkbox>
         </el-form-item>
 
         <el-form-item>
@@ -43,7 +48,8 @@
 </template>
 
 <script>
-
+// 避免在多个地方拼写字符串，导致的拼写错误问题
+const REMEMBER_KEY = 'remember_key'
 export default {
   name: 'Login',
   data() {
@@ -53,6 +59,8 @@ export default {
         username: '',
         password: ''
       },
+      // 因为该数据不需要提交给后端，所以单独定义（如果需要提交给后端，则需要放入 form 对象中一起更方便）
+      remember: false,
       // 规则对象
       rules: {
         username: [ // 可以书写多个规则，所以是数组
@@ -72,12 +80,26 @@ export default {
       }
     }
   },
+  created() {
+    // 去本地取一下之前存入的账号和密码，如果取到了 - 赋值操作
+    const formStr = localStorage.getItem(REMEMBER_KEY)
+    if (formStr) {
+      const formObj = JSON.parse(formStr)
+      this.form = formObj
+    }
+  },
   methods: {
     loginHandler() {
       this.$refs.form.validate(async valid => {
         console.log(valid)
         // 所有的表单项都通过校验 valid 变量才为 true，否则都是 false
         if (valid) {
+          // 添加记住我的逻辑
+          if (this.remember) {
+            localStorage.setItem(REMEMBER_KEY, JSON.stringify(this.form))
+          } else {
+            localStorage.removeItem(REMEMBER_KEY)
+          }
           // TODO LOGIN
           // 这里确保 token 返回之后再跳转到首页，防止首页有一些需要依赖 token 的逻辑
           await this.$store.dispatch('user/asyncLogin', this.form)
