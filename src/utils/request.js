@@ -1,6 +1,8 @@
 // 请求模块
 import axios from 'axios'
+import { Message } from 'element-ui'
 import { getToken } from './auth'
+
 // 分为两种：1、通用配置√ 2、定制化配置
 
 /**
@@ -54,6 +56,13 @@ service.interceptors.response.use(
     return response.data // 这两个 return 不能丢
   },
   error => {
+    // 接口出错的时候，自动执行这个回调
+    console.dir(error)
+    // 错误类型可能有好多种，根据不同的错误码做不同的用户提示，写的位置都在这里
+    Message({
+      type: 'warning',
+      message: error.response.data.msg
+    })
     return Promise.reject(error)
   }
 )
