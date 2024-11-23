@@ -1,4 +1,6 @@
 // 请求模块
+import router from '@/router'
+import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import { getToken } from './auth'
@@ -63,6 +65,14 @@ service.interceptors.response.use(
       type: 'warning',
       message: error.response.data.msg
     })
+    // Token 401处理
+    console.dir(error.response.status)
+    if (error.response.status === 401) {
+      // 1. 跳转到登录
+      router.push('/login')
+      // 2. 清空用户数据
+      store.commit('user/clearUserInfo')
+    }
     return Promise.reject(error)
   }
 )
