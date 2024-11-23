@@ -22,6 +22,10 @@ import '@/icons'
 // 注册 elementUI 组件
 Vue.use(ElementUI)
 
+// 在router引入之后引入
+// 添加权限控制初始化（相当于直接把 permission.js 中的代码立即执行一遍）
+import './permission'
+
 Vue.config.productionTip = false
 
 // vue实例化
