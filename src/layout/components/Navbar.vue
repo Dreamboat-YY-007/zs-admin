@@ -13,6 +13,11 @@
           <a target="_blank">
             <el-dropdown-item> 项目地址 </el-dropdown-item>
           </a>
+          <!--
+            退出登录的实现思路：
+              1、询问用户是否真的要退出
+              2、用户同意之后 清空当前的用户数据 + 跳转到登录页
+           -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">退出登录</span>
           </el-dropdown-item>
@@ -27,7 +32,28 @@ export default {
   methods: {
     // 退出登录
     logout() {
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$confirm('是否确认退出登录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // this.$message({
+        //   type: 'success',
+        //   message: '退出成功!'
+        // })
+        // 确认回调
+        // 1、清空用户数据（Vuex、cookies、localStorage？）
+        this.$store.commit('user/clearUserInfo')
+        // 2、跳转到登录
+        this.$router.push('/login')
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消退出'
+        // })
+        // 取消或者 .then 中有错误
+      })
     }
   }
 }

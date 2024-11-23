@@ -1,5 +1,5 @@
 import { loginAPI } from '@/api/user'
-import { getToken, setToken } from '@/utils/auth'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 export default {
   namespaced: true,
   // 数据状态 响应式 data
@@ -11,8 +11,14 @@ export default {
     setToken(state, newToken) {
       // 存入 Vuex
       state.token = newToken
-      // 存入 cookies
+      // 本地 cookies 也存一份
       setToken(newToken)
+    },
+    clearUserInfo(state) {
+      // 先清除 Vuex 中的 token
+      state.token = ''
+      // 再清除本地的
+      removeToken()
     }
   },
   // 异步 接口请求 + 修改mutation

@@ -24,7 +24,7 @@ export const routes = [
     path: '/workbench',
     component: Layout,
     children: [{
-      path: '',
+      path: '', // 路径为空
       component: () => import('@/views/Workbench/index'),
       meta: { title: '工作台', icon: 'el-icon-data-board' }
     }]
